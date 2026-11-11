@@ -1,0 +1,3 @@
+# used for configuring multiple containers together using docker compose & docker volume
+# frontend, backend, and database are typically hosted using different docker containers
+# if project gets large enough, we could potentially use docker.build.cloud to decrease build time with caching
