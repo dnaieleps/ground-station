@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import './App.css'    // import for styling of app screen
+import './styles/App.css'    // import for styling of app screen
 
 function App() {
   const [user, setUser] = useState(0)

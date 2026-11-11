@@ -1,25 +1,28 @@
-# this is the dockerfile, which mirrors the terminal commands that you would do when first starting up 
-# your project, but containerized inside a docker container to allow for uniform code execution
+# Multi-stage build: stage 1 compiles the Vite/React app with Node,
+# stage 2 serves the static output with nginx (small, production-ready image).
 
-# working with node version 22 as our base image
-FROM node:22   
+# ---------- Stage 1: build ----------
+FROM node:22-alpine AS build
 
-# sets working directory inside container to /app 
 WORKDIR /app
 
-# copies package.json and package-lock.json if available
-COPY package*.json ./
+# install dependencies first so this layer is cached unless package files change
+COPY package.json package-lock.json ./
+RUN npm ci
 
-# installs app dependencies 
-RUN npm install
+# copy the rest of the source and build to /app/dist
+COPY . .
+RUN npm run build
 
-# copies the rest of our app into the container
-COPY . . 
+# ---------- Stage 2: serve ----------
+FROM nginx:1.27-alpine
 
-# set port environment variable 
-ENV PORT=9000
-# exposes the port so our computer can use it
+# nginx config: listen on 9000 and fall back to index.html for client-side routes
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# copy only the built files from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
 EXPOSE 9000
 
-# runs the app 
-CMD ["npm", "start"]
+CMD ["nginx", "-g", "daemon off;"]

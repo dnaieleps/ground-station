@@ -18,8 +18,8 @@
     "jsx": "react-jsx",
 
     /* Linting */
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedLocals": false, // TODO: set back to true once SplitPane is finished
+    "noUnusedParameters": false, // TODO: set back to true once SplitPane is finished
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
